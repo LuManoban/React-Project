@@ -1,43 +1,46 @@
 import React, { useState } from 'react';
 import { isAuthenticated } from '../utils/auth'; // Importa la función isAuthenticated desde tu archivo de utilidades
 import { useNavigate } from "react-router-dom";
+import axios from 'axios'; // Importa Axios correctamente
 import '../styles/index.css';
 import '../styles/style.css';
 
 const Bienvenido = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLogin, setIsLogin] = useState(true); // Estado para controlar si se muestra el formulario de login o recuperación de contraseña
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const openForm = () => {
     setIsOpen(true);
   };
-  const navigate = useNavigate();
 
   const closeForm = () => {
     setIsOpen(false);
     setUsername('');
     setPassword('');
+    setEmail('');
     setError('');
+    setIsLogin(true); // Restablecer el formulario de inicio de sesión
   };
   
   const login = async () => {
     try {
-      const response = await fetch('https://node-restobar-project.onrender.com/auth/signin', {
-        method: 'POST',
+      const response = await axios.post('https://node-restobar-project.onrender.com/auth/signin', {
+        username: username,
+        password: password
+      }, {
         headers: {
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          username: username,
-          password: password
-        })
+        }
       });
   
-      if (response.ok) {
+      if (response.status === 200) {
         // Autenticación exitosa
-        const data = await response.json();
+        const data = response.data;
         const { access_token, refresh_token } = data;
       
         // Almacenar tokens en el almacenamiento local
@@ -59,22 +62,41 @@ const Bienvenido = () => {
     }
   };
 
+  const handleForgotPassword = () => {
+    // Cambiar al formulario de recuperación de contraseña
+    setIsLogin(false);
+  };
+
+  const recoverPassword = async () => {
+    try {
+      const response = await axios.post('https://node-restobar-project.onrender.com/auth/password/reset', {
+        email: email
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      if (response.status === 200) {
+        // Recuperación de contraseña exitosa
+        setError('Se ha enviado un correo electrónico para restablecer tu contraseña.');
+      } else {
+        setError('Error al enviar el correo electrónico de recuperación de contraseña.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setError('Error al enviar el correo electrónico de recuperación de contraseña. Por favor, inténtalo de nuevo más tarde.');
+    }
+  };
+
   return (
     <article className="hero d-flex" id="hero">
       <div className="container g-layout g-layout--center g-md md:g-layout--1fr-1fr">
         <div className="core bg-transparent">
           <div style={{ textAlign: "center" }} className="card__body">
-            <h1 style={{ marginBottom: "50px", marginTop: "-150px" }} className="card__title"> Bienvenido a <span className="c-primary">The Last Death Growl</span></h1>
-            <h2 style={{ marginBottom: "50px" }} className="card__subtitle">¡DONDE DISFRUTARAS LA MEJOR COMIDA Y BEBIDA JUNTO A LAS MEJORES BANDAS DE HEAVY METAL!</h2>
-            <p className="card__text md:d-block">
-              Date una vuelta por nuestra carta de especialidades, bebidas y merchandising. Ponte en contacto con nosotros o visita nuestras redes sociales!
-            </p>
-            <p style={{ marginBottom: "50px" }} className="card__text md:d-block">
-              No olvides REGISTRARTE para tener acceso a la función de DELIVERY, RESERVAS Y EVENTOS PRIVADOS.
-            </p>
-            <h3>¿Ya te has registrado?<span style={{ fontSize: "30px" }} className="c-primary">¡LOGUEATE!</span></h3>
-
-            {/* Button to open the modal */}
+            {/* Resto del contenido... */}
+            
+            {/* Botón para abrir el modal */}
             <button style={{ backgroundColor: '#272727', border: '2px solid red' }} className="open-button" onClick={openForm}>LOGUEATE</button>
 
             {/* Modal */}
@@ -82,24 +104,40 @@ const Bienvenido = () => {
               <div className="modal-dialog modal-dialog-centered" role="document">
                 <div className="modal-content">
                   <div className="modal-header">
-                    <h5 style={{color:'black'}} className="modal-title">Login</h5>
+                    <h5 style={{color:'black'}} className="modal-title">{isLogin ? 'Login' : 'Recuperar Contraseña'}</h5>
                     <button type="button" className="close" onClick={closeForm}>
                       <span>&times;</span>
                     </button>
                   </div>
                   <div className="modal-body">
                     {error && <div className="alert alert-danger" role="alert">{error}</div>}
-                    <form id="loginForm">
-                      <label style={{color:'black' , marginLeft:'40px'}} htmlFor="username">Username</label>
-                      <input style={{color:'white' , marginLeft:'40px'}} type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-                      <br></br>
-                      <label style={{color:'black' , marginLeft:'40px'}}  htmlFor="password">Password</label>
-                      <input style={{color:'white' , marginLeft:'40px'}} type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                    </form>
+                    {isLogin ? (
+                      <form id="loginForm">
+                        <label style={{color:'black' , marginLeft:'40px'}} htmlFor="username">Username</label>
+                        <input style={{color:'white' , marginLeft:'40px'}} type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                        <br></br>
+                        <label style={{color:'black' , marginLeft:'40px'}}  htmlFor="password">Password</label>
+                        <input style={{color:'white' , marginLeft:'40px'}} type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                      </form>
+                    ) : (
+                      <form id="forgotPasswordForm">
+                        <label style={{color:'black' , marginLeft:'40px'}} htmlFor="email">Correo Electrónico</label>
+                        <input style={{color:'white' , marginLeft:'40px'}} type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                      </form>
+                    )}
                   </div>
                   <div className="modal-footer">
-                    <button type="button" className="btn btn-primary" onClick={login}>Login</button>
-                    <button type="button" className="btn btn-secondary" onClick={closeForm}>Close</button>
+                    {isLogin ? (
+                      <>
+                        <button type="button" className="btn btn-primary" onClick={login}>Login</button>
+                        <button type="button" className="btn btn-secondary" onClick={handleForgotPassword}>Olvidé mi contraseña</button>
+                      </>
+                    ) : (
+                      <>
+                        <button type="button" className="btn btn-primary" onClick={recoverPassword}>Recuperar Contraseña</button>
+                        <button type="button" className="btn btn-secondary" onClick={() => setIsLogin(true)}>Volver al Login</button>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
