@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { isAuthenticated } from '../utils/auth'; // Importa la función isAuthenticated desde tu archivo de utilidades
+import  { useState } from 'react';
+// Importa la función isAuthenticated desde tu archivo de utilidades
 import { useNavigate } from "react-router-dom";
 import '../styles/index.css';
 import '../styles/style.css';
@@ -38,7 +38,7 @@ const Bienvenido = () => {
       if (response.ok) {
         // Autenticación exitosa
         const data = await response.json();
-        const { access_token, refresh_token } = data;
+      
       
         // Almacenar tokens en el almacenamiento local
         localStorage.setItem('access_token', data.authToken.access_token);

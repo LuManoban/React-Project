@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/index.css';
 import '../styles/style.css';
@@ -95,7 +95,7 @@ const Admin = () => {
 
   const modificarRegistro = async () => {
     try {
-      await axios.put(`https://node-restobar-project.onrender.com/users/${registroSeleccionado.id}`, nuevoRegistro, {
+      await axios.patch(`https://node-restobar-project.onrender.com/users/${registroSeleccionado.id}`, nuevoRegistro, {
         headers: {
           Authorization: `Bearer ${token}`
         }
