@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { isAuthenticated } from '../utils/auth'; // Importa la función isAuthenticated desde tu archivo de utilidades
 import '../styles/index.css';
 import '../styles/style.css';
 
@@ -6,6 +7,7 @@ const Bienvenido = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const openForm = () => {
     setIsOpen(true);
@@ -13,15 +15,47 @@ const Bienvenido = () => {
 
   const closeForm = () => {
     setIsOpen(false);
+    setUsername('');
+    setPassword('');
+    setError('');
+  };
+  
+  const login = async () => {
+    try {
+      const response = await fetch('https://node-restobar-project.onrender.com/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      });
+  
+      if (response.ok) {
+        // Autenticación exitosa
+        const data = await response.json();
+        const { access_token, refresh_token } = data;
+      
+        // Almacenar tokens en el almacenamiento local
+        localStorage.setItem('access_token', access_token);
+        localStorage.setItem('refresh_token', refresh_token);
+  
+        // Cerrar el formulario del modal
+        closeForm();
+      } else {
+        // Error de autenticación
+        console.error('Error de autenticación');
+        setError('Error de autenticación. Por favor, verifica tus credenciales.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setError('Error al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde.');
+    }
   };
 
-  const login = () => {
-    // Aquí puedes implementar la lógica de autenticación
-    console.log('Username:', username);
-    console.log('Password:', password);
-  };
-
-  return ( 
+  return (
     <article className="hero d-flex" id="hero">
       <div className="container g-layout g-layout--center g-md md:g-layout--1fr-1fr">
         <div className="core bg-transparent">
@@ -36,26 +70,36 @@ const Bienvenido = () => {
             </p>
             <h3>¿Ya te has registrado?<span style={{ fontSize: "30px" }} className="c-primary">¡LOGUEATE!</span></h3>
 
-            {/* Button to open the popup form */}
+            {/* Button to open the modal */}
             <button style={{ backgroundColor: '#272727', border: '2px solid red' }} className="open-button" onClick={openForm}>LOGUEATE</button>
 
-            {/* The form */}
-            {isOpen && (
-              <div style={{ zIndex: 100 }} className="form-popup">
-                <form className="form-container" id="loginForm">
-                  <h1 style={{ color: 'black' }}>Login</h1>
-
-                  <label style={{ color: 'black' }} htmlFor="user"><b>Username</b></label>
-                  <input style={{ color: 'black' }} type="text" placeholder="Enter Username" id="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-
-                  <label style={{ color: 'black' }} htmlFor="psw"><b>Password</b></label>
-                  <input style={{ color: 'black' }} type="password" placeholder="Enter Password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-
-                  <button type="button" className="btn" onClick={login}>Login</button>
-                  <button type="button" className="btn cancel" onClick={closeForm}>Close</button>
-                </form>
+            {/* Modal */}
+            <div className={`modal ${isOpen ? 'show' : ''}`} tabIndex="-1" role="dialog" style={{ display: isOpen ? 'block' : 'none' }}>
+              <div className="modal-dialog modal-dialog-centered" role="document">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 style={{color:'black'}} className="modal-title">Login</h5>
+                    <button type="button" className="close" onClick={closeForm}>
+                      <span>&times;</span>
+                    </button>
+                  </div>
+                  <div className="modal-body">
+                    {error && <div className="alert alert-danger" role="alert">{error}</div>}
+                    <form id="loginForm">
+                      <label style={{color:'black' , marginLeft:'40px'}} htmlFor="username">Username</label>
+                      <input style={{color:'white' , marginLeft:'40px'}} type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                      <br></br>
+                      <label style={{color:'black' , marginLeft:'40px'}}  htmlFor="password">Password</label>
+                      <input style={{color:'white' , marginLeft:'40px'}} type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                    </form>
+                  </div>
+                  <div className="modal-footer">
+                    <button type="button" className="btn btn-primary" onClick={login}>Login</button>
+                    <button type="button" className="btn btn-secondary" onClick={closeForm}>Close</button>
+                  </div>
+                </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
       </div>
