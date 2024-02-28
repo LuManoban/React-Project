@@ -1,0 +1,38 @@
+:root {
+  color-scheme: dark;
+  --primary-theme-color: purple;
+  --secondary-theme-color: gold;
+  --primary-background-color: #272727;
+  --secondary-background-color: rgba(171, 0, 171, 0.893);
+  --primary-text-color: #f7f8f9;
+  --primary-shadow-color: #ffffff40;
+  --max-width: 1024px;
+  --element-size: 1rem;
+  --element-spacing: 2rem;
+  --border-radius: 1rem;
+  --transition-duration: 0.25s;
+}
+
+.body {
+  /*background-image: url(https://wallpapercave.com/wp/wp2361283.jpg);
+  background-size: 2500px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; */
+  
+  background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(0,0,0,1) 100%);
+  margin: 0;
+  font-size: var(--element-size);
+}
+
+.section {
+  padding-bottom: var(--element-spacing);
+}
+
+.container {
+  position: relative;
+  max-width: var(--max-width);
+  padding-right: calc(var(--element-spacing) * 0.5);
+  padding-left: calc(var(--element-spacing) * 0.5);
+  margin: 0 auto;
+}
