@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { isAuthenticated } from '../utils/auth'; // Importa la función isAuthenticated desde tu archivo de utilidades
+import { useNavigate } from "react-router-dom";
 import '../styles/index.css';
 import '../styles/style.css';
 
@@ -12,6 +13,7 @@ const Bienvenido = () => {
   const openForm = () => {
     setIsOpen(true);
   };
+  const navigate = useNavigate();
 
   const closeForm = () => {
     setIsOpen(false);
@@ -39,9 +41,11 @@ const Bienvenido = () => {
         const { access_token, refresh_token } = data;
       
         // Almacenar tokens en el almacenamiento local
-        localStorage.setItem('access_token', access_token);
-        localStorage.setItem('refresh_token', refresh_token);
-  
+        localStorage.setItem('access_token', data.authToken.access_token);
+        localStorage.setItem('refresh_token', data.authToken.refresh_token);
+        localStorage.setItem('rol', data.role_id);
+        //navigate("/producto");
+        navigate("/productos");
         // Cerrar el formulario del modal
         closeForm();
       } else {

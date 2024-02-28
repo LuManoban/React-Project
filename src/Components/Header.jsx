@@ -4,6 +4,7 @@ import { isAuthenticated } from '../utils/auth'; // Importa la función isAuthen
 import '../styles/index.css';
 import '../styles/style.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { getJwtFromLocalStorage } from "../helpers/jwt";
 
 const Header = () => {
   // Estado local para controlar la visibilidad del menú
@@ -17,8 +18,10 @@ const Header = () => {
 
   // Manejador para cerrar sesión y actualizar la visibilidad del menú
   const handleLogout = () => {
-    // Realiza la lógica para cerrar sesión, por ejemplo, eliminar el token de localStorage
-    // Después, actualiza el estado para ocultar el menú
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem('rol');
+    window.location.href = "/inicio";
     setMenuVisible(false);
   };
 
@@ -49,7 +52,7 @@ const Header = () => {
               id="headerMenu"
             >
               {/* Renderizar el menú solo si el usuario está autenticado */}
-              
+             
                 <>
                   <li>
                     <Link className="button1" to="/inicio">
@@ -57,40 +60,47 @@ const Header = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link className="button1" to="/registrate" >
+                    <Link className="button1" to="/registrate" onClick={handleRegister}>
                       Registrate
                     </Link>
                   </li>
+                  {getJwtFromLocalStorage() && (
                   <li>
                     <Link className="button1" to="/productos">
                       Productos
                     </Link>
                   </li>
+                   )}
+                   {getJwtFromLocalStorage() && (
                   <li>
                     <Link className="button1" to="/contactanos">
                       Contáctanos
                     </Link>
                   </li>
+                   )}
+                   {getJwtFromLocalStorage() && (
                   <li>
                     <Link className="button1" to="/delivery">
                       Delivery
                     </Link>
                   </li>
-                  {/* <li>
-                    <Link className="button1" to="/login" onClick={handleLogout}>
-                      Logout
-                    </Link>
-                  </li> */}
-                  
-                  {(isAuthenticated() && menuVisible) && (
+                 )}
+                 {getJwtFromLocalStorage()  && localStorage.getItem("rol") == 4 && (
                   <li>
                     <Link className="button1" to="/adminitrador">
                       Administrador
                     </Link>
                   </li>
-                )}
+                  )}
+                  {getJwtFromLocalStorage() && (
+                  <li>
+                    <Link className="button1" to="/login" onClick={handleLogout}>
+                      Logout
+                    </Link>
+                  </li>
+                  )}
                 </>
-              
+             
             </ul>
           </div>
         </nav>
