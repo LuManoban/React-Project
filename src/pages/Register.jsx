@@ -9,8 +9,9 @@ const Register = () => {
   return (
     <>
     <Header/>
+    <br></br><br></br><br></br><br></br>
     <Registro/>
-    <Footer/>
+    {/* <Footer/> */}
     </>   
   );
 };

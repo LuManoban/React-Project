@@ -1,88 +1,75 @@
-import '../styles/index.css'
-import '../styles/style.css'
+import React, { useState } from 'react';
+import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
 
-const Registro = () =>{
+const Registro = () => {
+  const [nuevoRegistro, setNuevoRegistro] = useState({
+    name: '',
+    last_name: '',
+    username: '',
+    email: '',
+    role_id: 1,
+    password: ''
+  });
+
+  const handleChange = (e) => {
+    setNuevoRegistro({
+      ...nuevoRegistro,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('https://node-restobar-project.onrender.com/users', nuevoRegistro);
+      alert('Usuario registrado con éxito.');
+      // Puedes redirigir a otra página o realizar otra acción aquí si es necesario
+    } catch (error) {
+      console.error('Error al agregar el registro:', error);
+      alert('Ocurrió un error al registrar el usuario.');
+    }
+  };
+
   return (
-    <main className="main">
-    <article className="hero d-flex" id="hero">
-      <div className="ms-5">
-        <form className="ms-5" action="#" method="post">
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
+    <Container>
+      <Row className="justify-content-center">
+        <Col md={6}>
+          <Form onSubmit={handleSubmit}>
+            <h1 className="mb-4">Registro</h1>
+            <Form.Group controlId="name">
+              <Form.Label>Nombre</Form.Label>
+              <Form.Control type="text" name="name" placeholder="Ingresa tu nombre" value={nuevoRegistro.name} onChange={handleChange} required />
+            </Form.Group>
 
-          <h1 style={{ fontSize: '50px', color: 'white' }} className="label contact">Registrate</h1>
-          <h3 className="label contact">Registrate para tener beneficios exclusivos</h3>
+            <Form.Group controlId="last_name">
+              <Form.Label>Apellido</Form.Label>
+              <Form.Control type="text" name="last_name" placeholder="Ingresa tu apellido" value={nuevoRegistro.last_name} onChange={handleChange} required />
+            </Form.Group>
 
-          <br />
+            <Form.Group controlId="username">
+              <Form.Label>Usuario</Form.Label>
+              <Form.Control type="text" name="username" placeholder="Ingresa tu usuario" value={nuevoRegistro.username} onChange={handleChange} required />
+            </Form.Group>
 
-          <div style={{ display: 'flex', backgroundColor: 'black', width: '700px', height: '700px', textAlign: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: '50%' }}>
-            <div style={{ display: 'flex', backgroundColor: 'white', width: '650px', height: '650px', textAlign: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: '50%' }}>
-              <div style={{ display: 'flex', backgroundColor: 'black', width: '600px', height: '600px', textAlign: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: '50%' }}>
-                <div style={{ display: 'flex', backgroundColor: 'white', width: '550px', height: '550px', textAlign: 'center', justifyContent: 'center', alignItems: 'center', borderRadius: '50%' }}>
-                  <div style={{ display: 'flex', flexFlow: 'column', backgroundColor: 'black', width: '500px', height: '500px', textAlign: 'center', justifyContent: 'center', borderRadius: '50%' }}>
-                    <div className="ms-5">
-                      <label style={{ color: 'white' }} className="label" htmlFor="nombre">Nombre:</label>
-                      <input style={{ backgroundColor: 'white', color: 'black', borderColor: 'red' }} className="placeholder" type="text" name="nombre" id="nombre" placeholder="Ingresa tu nombre" required />
-                    </div>
+            <Form.Group controlId="email">
+              <Form.Label>Correo Electrónico</Form.Label>
+              <Form.Control type="email" name="email" placeholder="Ingresa tu correo electrónico" value={nuevoRegistro.email} onChange={handleChange} required />
+            </Form.Group>
 
-                    <br />
+            <Form.Group controlId="password">
+              <Form.Label>Contraseña</Form.Label>
+              <Form.Control type="password" name="password" placeholder="Ingresa tu contraseña" value={nuevoRegistro.password} onChange={handleChange} required />
+            </Form.Group>
 
-                    <div className="ms-5">
-                      <label style={{ color: 'white' }} className="label" htmlFor="apellido">Apellido:</label>
-                      <input style={{ backgroundColor: 'white', color: 'black', borderColor: 'red' }} className="placeholder" type="text" name="apellido" id="apellido" placeholder="Ingresa tu apellido" required />
-                    </div>
-
-                    <br />
-
-                    <div className="ms-5">
-                      <label style={{ color: 'white' }} className="label" htmlFor="username">Username:</label>
-                      <input style={{ backgroundColor: 'white', color: 'black', borderColor: 'red' }} className="placeholder" type="text" name="username" id="username" placeholder="Ingresa tu username" required />
-                    </div>
-
-                    <br />
-
-                    <div className="ms-5">
-                      <label style={{ color: 'white' }} className="label" htmlFor="email">Correo:</label>
-                      <input style={{ backgroundColor: 'white', color: 'black', borderColor: 'red' }} className="placeholder" type="email" name="email" id="email" placeholder="Ingresa tu correo" required />
-                    </div>
-
-                    <br />
-
-                    <div className="ms-5">
-                      <label style={{ color: 'white' }} className="label" htmlFor="role_id">Role_Id:</label>
-                      <input style={{ backgroundColor: 'white', color: 'black', borderColor: 'red' }} className="placeholder" type="text" name="role_id" id="role_id" placeholder="Ingresa tu role_id" required />
-                    </div>
-
-                    <br />
-
-                    <div className="ms-5">
-                      <label style={{ color: 'white' }} className="label" htmlFor="password">Password:</label>
-                      <input style={{ backgroundColor: 'white', color: 'black', borderColor: 'red' }} className="placeholder" type="password" name="password" id="password" placeholder="Ingresa tu password" required />
-                    </div>
-
-                    <br />
-
-                    <div className="label">
-                      <input style={{ backgroundColor: 'red', color: 'white', fontSize: '30px' }} className="label" type="submit" value="REGISTRAR" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <br />
-          <br />
-          <br />
-          <br />
-        </form>
-      </div>
-    </article>
-  </main>
+            <Button variant="primary" type="submit" className="w-100 mt-3">
+              Registrarse
+            </Button>
+          </Form>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
